@@ -20,6 +20,9 @@
 commands/ds-web.md               /ds-web slash command
 server/dsweb-ask.js              CLI：一次 prompt → 文本（command 用）
 server/dsweb-mcp.js              stdio MCP server（MCP 工具用）
+proxy/ds-web-proxy.py            修复代理（install.ps1 装到 ~/.claude/）
+install.ps1                      本机安装器（代理 + settings + 自启 + 插件）
+bootstrap.ps1                    远端一键安装（下载本仓库 zip 后跑 install.ps1）
 ```
 
 代理与启动器在 `~/.claude/`：
@@ -30,10 +33,31 @@ start-ds-web-proxy.cmd           手动启动器（保留窗口）
 %APPDATA%\...\Startup\ds-web-proxy.cmd   登录自启（pythonw，无窗口）
 ```
 
-## 安装
+## 安装（新电脑一条命令）
+
+仓库：https://github.com/wangliang01/ds-web-claude
+
+前提：Windows + **Python 3.11+** + **Claude Code CLI**，且 15721 的 cc-switch 网关在本机跑着。
+
+```powershell
+irm https://raw.githubusercontent.com/wangliang01/ds-web-claude/main/bootstrap.ps1 | iex
+```
+
+脚本会下载仓库 zip、跑 `install.ps1`（装代理、改 `settings.json`、写登录自启、注册插件），然后删临时目录。幂等，重复跑安全。
+
+完事后**重启 Claude Code**。
+
+### 手动 / 开发方式
+
+```powershell
+git clone https://github.com/wangliang01/ds-web-claude
+powershell -ExecutionPolicy Bypass -File .\ds-web-claude\install.ps1
+```
+
+或者只装插件（不含代理）：
 
 ```bash
-claude plugin marketplace add C:/Users/mike.wang.ext/.claude/ds-web-plugin
+claude plugin marketplace add wangliang01/ds-web-claude
 claude plugin install ds-web@ds-web-local
 ```
 
@@ -67,15 +91,9 @@ MCP 工具：`ds_web(prompt, system?, model?, max_tokens?)`。
 
 ## 换电脑
 
-前提：新机器装好 **Python 3.11+**（`python.exe` 与 `pythonw.exe` 在 `C:\Program Files\Python311\`，或在 PATH 上）和 **Claude Code CLI**（`claude` 在 PATH 上）；15721 上的 cc-switch 网关本身也要在新机器跑起来。
+见上面「安装」—— `bootstrap.ps1` 就是为换机器准备的，一条命令拉取并安装，无需 git。
 
-把整个 `ds-web-plugin` 目录拷过去，然后：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File <拷贝后的目录>\install.ps1
-```
-
-脚本幂等，会做五件事：
+`install.ps1` 幂等，做五件事：
 
 1. 定位 Python（`C:\Program Files\Python311\python.exe`，否则 PATH 上的 `python`）
 2. 把 `proxy/ds-web-proxy.py` 复制到 `~\.claude\ds-web-proxy.py`
