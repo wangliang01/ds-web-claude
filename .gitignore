@@ -1,0 +1,12 @@
+# local runtime / secrets
+*.log
+proxy.log
+settings.json
+.tmp-*
+.check-install.ps1
+__pycache__/
+*.pyc
+
+# os
+Thumbs.db
+.DS_Store

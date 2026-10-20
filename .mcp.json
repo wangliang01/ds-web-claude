@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ds-web": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/server/dsweb-mcp.js"],
+      "env": {
+        "DSWEB_BASE_URL": "http://127.0.0.1:15721",
+        "DSWEB_MODEL": "ds-web/deepseek-v4.1-flash"
+      }
+    }
+  }
+}

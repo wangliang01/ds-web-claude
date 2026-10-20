@@ -1,0 +1,26 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ds-web-local",
+  "description": "Local marketplace hosting the ds-web delegation plugin",
+  "owner": {
+    "name": "mike.wang.ext"
+  },
+  "plugins": [
+    {
+      "name": "ds-web",
+      "description": "Delegate prompts to the local ds-web (DeepSeek) model: /ds-web slash command plus ds_web MCP tool.",
+      "version": "1.0.0",
+      "author": {
+        "name": "mike.wang.ext"
+      },
+      "source": "./",
+      "category": "productivity",
+      "tags": [
+        "deepseek",
+        "mcp",
+        "slash-command",
+        "delegation"
+      ]
+    }
+  ]
+}

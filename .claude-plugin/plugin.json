@@ -1,0 +1,10 @@
+{
+  "name": "ds-web",
+  "version": "1.0.0",
+  "description": "Delegate prompts to the local ds-web (DeepSeek) model from Claude Code, via the /ds-web slash command and the ds_web MCP tool.",
+  "author": { "name": "mike.wang.ext" },
+  "license": "MIT",
+  "keywords": ["deepseek", "ds-web", "delegation", "mcp", "slash-command"],
+  "commands": "./commands/",
+  "mcpServers": "./.mcp.json"
+}
