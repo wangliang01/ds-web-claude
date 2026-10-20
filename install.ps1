@@ -92,16 +92,27 @@ try {
   Say "WARN: proxy not answering on $Port yet - check $ClaudeDir\ds-web-proxy.py manually"
 }
 
-# --- 6. plugin --------------------------------------------------------------
+# --- 6. plugin: stage repo to a persistent path, then register ---------------
+# The marketplace source must outlive this script (bootstrap runs from a temp
+# dir it deletes), so always register from ~\.claude\ds-web-plugin.
+$PersistRoot = Join-Path $ClaudeDir "ds-web-plugin"
+if ($PersistRoot.TrimEnd("\") -ne $PluginRoot.TrimEnd("\")) {
+  New-Item -ItemType Directory -Force -Path $PersistRoot | Out-Null
+  $rc = Start-Process -FilePath "robocopy.exe" -Wait -PassThru -WindowStyle Hidden `
+        -ArgumentList @("`"$PluginRoot`"", "`"$PersistRoot`"", "/E", "/XD", ".git", "/NFL", "/NDL", "/NJH", "/NJS", "/NP")
+  if ($rc.ExitCode -ge 8) { throw "robocopy failed staging plugin (exit $($rc.ExitCode))" }
+}
+Say "plugin staged -> $PersistRoot"
+
 $claude = Get-Command claude -ErrorAction SilentlyContinue
 if (-not $claude) {
   Say "WARN: claude CLI not found on PATH; install Claude Code, then run:"
-  Say "  claude plugin marketplace add `"$PluginRoot`""
+  Say "  claude plugin marketplace add `"$PersistRoot`""
   Say "  claude plugin install ds-web@ds-web-local"
   return
 }
 $market = "ds-web-local"
-& claude plugin marketplace add $PluginRoot 2>&1 | Out-Null
+& claude plugin marketplace add $PersistRoot 2>&1 | Out-Null
 & claude plugin install "ds-web@$market" 2>&1 | Out-Null
 Say "plugin: ds-web@$market installed (if it failed, run: claude plugin install ds-web@$market)"
 
